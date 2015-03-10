@@ -109,7 +109,6 @@ public class AllTelePads {
 
 	private boolean saveData(ArrayList<StorageModel> telePadStorageList) {
 		File file = TelePadPlugin.getStorageFile();
-		if(!file.exists()) return false;
 		try {
 			SavingAndLoadingBinary.save(telePadStorageList, file);
 		} catch (Exception e) {

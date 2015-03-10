@@ -26,6 +26,7 @@ public class Teleer {
 	private long ticksBeforeTele = 40;
 	private long nauseaTicks = 100;
 	private long blindnessTicks = 100;
+	private long disableEffectsAfterTicks = 5;
 
 	private Teleer() {
 		this.allTelePads = AllTelePads.get();
@@ -44,9 +45,10 @@ public class Teleer {
 		this.playersThatHasBeenInformedToReadTheRules = new PlayerInfo<Object>();
 		this.playersWithTemporaryTelePause = new PlayerInfo<Object>();
 		this.playersAboutToTele = new PlayerInfo<TelePadInfo>();
-		this.ticksBeforeTele = TelePadPlugin.getPluginConfig().getInt("TicksBeforeTele");
+		this.ticksBeforeTele = TelePadPlugin.getPluginConfig().getInt("TeleportAfterTicks");
 		this.nauseaTicks = TelePadPlugin.getPluginConfig().getInt("NauseaTicks");
 		this.blindnessTicks = TelePadPlugin.getPluginConfig().getInt("BlindnessTicks");
+		this.disableEffectsAfterTicks = TelePadPlugin.getPluginConfig().getInt("DisableEffectsAfterTicks");
 	}
 
 	void disable() {
@@ -106,11 +108,15 @@ public class Teleer {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
 			public void run() {
-				if (!isAboutToTele(player)) return;
-				setPlayerIsAboutToTele(player, info, false);
 				player.setWalkSpeed(oldWalkSpeed);
 				if (hasNausea) player.removePotionEffect(PotionEffectType.CONFUSION);
 				if (hasBlindness) player.removePotionEffect(PotionEffectType.BLINDNESS);
+			}
+		}, this.disableEffectsAfterTicks);
+		scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
+			public void run() {
+				if (!isAboutToTele(player)) return;
+				setPlayerIsAboutToTele(player, info, false);
 				tele(player, info);
 			}
 		}, this.ticksBeforeTele);

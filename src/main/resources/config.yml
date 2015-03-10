@@ -1,6 +1,9 @@
-TicksBeforeTele: 40
+TeleportAfterTicks: 40
 BlindnessTicks: 100
 NauseaTicks: 100
+DisableEffectsAfterTicks: 35
+
+
 
 
 

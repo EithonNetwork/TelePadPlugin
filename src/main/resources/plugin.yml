@@ -1,12 +1,12 @@
 name: TelePadPlugin
 main: se.fredsfursten.telepadplugin.TelePadPlugin
-version: 0.1-DEV
+version: 0.2
 author: vanbrayne
 description: A Minecraft plugin for so called "Jump Pad" functionality
 commands:
   telepad:
     description: Control jump pads
-    usage: /telepad add| remove | edit | goto | list 
+    usage: /telepad add | target | remove  | goto | list 
     permission-message: You don't have <permission>
 permissions:
   telepad.*:
@@ -15,7 +15,6 @@ permissions:
     telepad.add: true
     telepad.target: true
     telepad.remove: true
-    telepad.edit: true
     telepad.list: true
     telepad.goto: true
   telepad.add:
@@ -26,9 +25,6 @@ permissions:
     default: op
   telepad.remove:
     description: Access to /telepad remove command
-    default: op
-  telepad.edit:
-    description: Access to /telepad edit command
     default: op
   telepad.list:
     description: Access to /telepad list command

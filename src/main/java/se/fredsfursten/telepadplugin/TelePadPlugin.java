@@ -81,8 +81,6 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 			Commands.get().targetCommand(player, args);
 		} else if (command.equals("remove")) {
 			Commands.get().removeCommand(player, args);
-		} else if (command.equals("edit")) {
-			Commands.get().editCommand(player, args);
 		} else if (command.equals("list")) {
 			Commands.get().listCommand(player);
 		} else if (command.equals("goto")) {
