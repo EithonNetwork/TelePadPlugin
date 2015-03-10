@@ -1,4 +1,4 @@
-package se.fredsfursten.jumppadplugin;
+package se.fredsfursten.telepadplugin;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,10 +20,10 @@ public class Commands {
 	private static final String RULES_COMMAND_BEGINNING = "/rules";
 
 	private JavaPlugin plugin = null;
-	private AllJumpPads allJumpPads = null;
+	private AllTelePads allTelePads = null;
 
 	private Commands() {
-		this.allJumpPads = AllJumpPads.get();
+		this.allTelePads = AllTelePads.get();
 	}
 
 	static Commands get()
@@ -36,11 +36,11 @@ public class Commands {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.allJumpPads.load(plugin);
+		this.allTelePads.load(plugin);
 	}
 
 	void disable() {
-		this.allJumpPads.save();
+		this.allTelePads.save();
 	}
 
 	void addCommand(Player player, String[] args)
@@ -57,20 +57,20 @@ public class Commands {
 		double upSpeed = 0.0;
 		double forwardSpeed = 0.0;
 
-		createOrUpdateJumpPad(player, name, upSpeed, forwardSpeed);
+		createOrUpdateTelePad(player, name, upSpeed, forwardSpeed);
 	}
 
 	private boolean verifyNameIsNew(Player player, String name) {
-		JumpPadInfo info = this.allJumpPads.getByName(name);
+		TelePadInfo info = this.allTelePads.getByName(name);
 		if (info != null)
 		{
-			player.sendMessage("Jumppad already exists: " + name);
+			player.sendMessage("Telepad already exists: " + name);
 			return true;		
 		}
 		return true;
 	}
 
-	private void createOrUpdateJumpPad(Player player, String name, double upSpeed, double forwardSpeed) {
+	private void createOrUpdateTelePad(Player player, String name, double upSpeed, double forwardSpeed) {
 		Block pressurePlate = Misc.getFirstBlockOfMaterial(Material.STONE_PLATE, player.getLocation(), 3);
 		if (pressurePlate == null) {
 			player.sendMessage("No stone plate within 3 blocks");
@@ -81,10 +81,10 @@ public class Commands {
 		Vector velocityVector;
 		location = pressurePlate.getLocation();
 		try {
-			JumpPadInfo newInfo = new JumpPadInfo(name, location, location, player);
-			this.allJumpPads.add(newInfo);
+			TelePadInfo newInfo = new TelePadInfo(name, location, location, player);
+			this.allTelePads.add(newInfo);
 			if (player != null) {
-				Jumper.get().playerCanJump(player, false);
+				Teleer.get().playerCanTele(player, false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,7 +105,7 @@ public class Commands {
 	void editCommand(Player player, String[] args)
 	{
 		if (!verifyPermission(player, "jumppad.edit")) return;
-		JumpPadInfo info = this.allJumpPads.getByLocation(player.getLocation());
+		TelePadInfo info = this.allTelePads.getByLocation(player.getLocation());
 		if (info == null) {
 			player.sendMessage("You must go to a jumppad before you edit the jumppad. Use /jumppad goto <name>.");	
 			return;
@@ -130,7 +130,7 @@ public class Commands {
 			return;
 		}
 
-		createOrUpdateJumpPad(player, info.getName(), upSpeed, forwardSpeed);
+		createOrUpdateTelePad(player, info.getName(), upSpeed, forwardSpeed);
 	}
 
 	void removeCommand(Player player, String[] args)
@@ -141,13 +141,13 @@ public class Commands {
 			return;
 		}
 		String name = args[1];
-		JumpPadInfo info = this.allJumpPads.getByName(name);
+		TelePadInfo info = this.allTelePads.getByName(name);
 		if (info == null)
 		{
 			player.sendMessage("Unknown jumppad: " + name);
 			return;	
 		}
-		this.allJumpPads.remove(info);
+		this.allTelePads.remove(info);
 	}
 
 	void targetCommand(Player player, String[] args)
@@ -158,7 +158,7 @@ public class Commands {
 			return;
 		}
 		String name = args[1];
-		JumpPadInfo info = this.allJumpPads.getByName(name);
+		TelePadInfo info = this.allTelePads.getByName(name);
 		if (info == null)
 		{
 			player.sendMessage("Unknown jumppad: " + name);
@@ -176,7 +176,7 @@ public class Commands {
 			return;
 		}
 		String name = args[1];
-		JumpPadInfo info = this.allJumpPads.getByName(name);
+		TelePadInfo info = this.allTelePads.getByName(name);
 		if (info == null)
 		{
 			player.sendMessage("Unknown jumppad: " + name);
@@ -184,15 +184,15 @@ public class Commands {
 		}
 		player.teleport(info.getLocation());
 		// Temporarily disable jump for this player to avoid an immediate jump at the jump pad
-		Jumper.get().playerCanJump(player, false);
+		Teleer.get().playerCanTele(player, false);
 	}
 
 	void listCommand(Player player)
 	{
-		if (!verifyPermission(player, "jumppad.list")) return;
+		if (!verifyPermission(player, "telepad.list")) return;
 
-		player.sendMessage("Jump pads:");
-		for (JumpPadInfo info : this.allJumpPads.getAll()) {
+		player.sendMessage("Tele pads:");
+		for (TelePadInfo info : this.allTelePads.getAll()) {
 			player.sendMessage(info.toString());
 		}
 	}

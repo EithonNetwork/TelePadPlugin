@@ -1,9 +1,12 @@
-package se.fredsfursten.jumppadplugin;
+package se.fredsfursten.telepadplugin;
+
+import java.io.File;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,20 +18,30 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import se.fredsfursten.jumppadplugin.Jumper;
+import se.fredsfursten.plugintools.PluginConfig;
+import se.fredsfursten.telepadplugin.Teleer;
 
-public final class JumpPadPlugin extends JavaPlugin implements Listener {
+public final class TelePadPlugin extends JavaPlugin implements Listener {
+	private static File telePadStorageFile;
+	private static PluginConfig configuration;
 
 	@Override
 	public void onEnable() {
+		if (configuration == null) {
+			configuration = new PluginConfig(this, "config.yml");
+		} else {
+			configuration.load();
+		}
+
+		telePadStorageFile = new File(getDataFolder(), "telepads.bin");
 		getServer().getPluginManager().registerEvents(this, this);		
-		Jumper.get().enable(this);
+		Teleer.get().enable(this);
 		Commands.get().enable(this);
 	}
 
 	@Override
 	public void onDisable() {
-		Jumper.get().disable();
+		Teleer.get().disable();
 		Commands.get().disable();
 	}
 
@@ -40,13 +53,7 @@ public final class JumpPadPlugin extends JavaPlugin implements Listener {
 		Block pressurePlate = event.getClickedBlock();
 		if (pressurePlate == null) return;
 		if (pressurePlate.getType() != Material.STONE_PLATE) return;
-		Jumper.get().maybeJump(player, pressurePlate);
-	}
-
-	private boolean isMoving(Vector eventVelocity) {
-		return (eventVelocity.getX() != 0.0)
-				|| (eventVelocity.getY() != 0.0)
-				|| (eventVelocity.getZ() != 0.0);
+		Teleer.get().maybeTele(player, pressurePlate);
 	}
 
 	@EventHandler
@@ -86,4 +93,15 @@ public final class JumpPadPlugin extends JavaPlugin implements Listener {
 		}
 		return true;
 	}
-}
+
+
+
+	public static File getStorageFile()
+	{
+		return telePadStorageFile;
+	}
+
+	public static FileConfiguration getPluginConfig()
+	{
+		return configuration.getFileConfiguration();
+	}}

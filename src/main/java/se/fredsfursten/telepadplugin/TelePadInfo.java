@@ -1,4 +1,4 @@
-package se.fredsfursten.jumppadplugin;
+package se.fredsfursten.telepadplugin;
 
 import java.util.UUID;
 
@@ -8,14 +8,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-class JumpPadInfo {
+class TelePadInfo {
 	private Location location;
 	private Location targetLocation;
 	private String name;
 	private UUID creatorId;
 	private String creatorName;
 
-	JumpPadInfo(String name, Location location, Location targetLocation, Player creator)
+	TelePadInfo(String name, Location location, Location targetLocation, Player creator)
 	{
 		this.name = name;
 		this.location = location;
@@ -30,10 +30,10 @@ class JumpPadInfo {
 		}
 	}
 
-	public static JumpPadInfo createJumpPadInfo(StorageModel storageModel)
+	public static TelePadInfo createTelePadInfo(StorageModel storageModel)
 	{
 		Player creator = storageModel.getCreator();
-		return new JumpPadInfo(storageModel.getName(), storageModel.getLocation(), storageModel.getTargetLocation(), creator);
+		return new TelePadInfo(storageModel.getName(), storageModel.getLocation(), storageModel.getTargetLocation(), creator);
 	}
 
 	Location getTargetLocation() {
@@ -53,7 +53,7 @@ class JumpPadInfo {
 	}
 
 	String getBlockHash() {
-		return JumpPadInfo.toBlockHash(this.location);
+		return TelePadInfo.toBlockHash(this.location);
 	}
 
 	static String toBlockHash(Location location)

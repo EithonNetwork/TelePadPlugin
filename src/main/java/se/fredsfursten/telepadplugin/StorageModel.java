@@ -1,4 +1,4 @@
-package se.fredsfursten.jumppadplugin;
+package se.fredsfursten.telepadplugin;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -15,6 +15,8 @@ class StorageModel implements Serializable {
 	private double targetX;
 	private double targetY;
 	private double targetZ;
+	private float targetYaw;
+	private float targetPitch;
 	private double blockX;
 	private double blockY;
 	private double blockZ;
@@ -30,9 +32,14 @@ class StorageModel implements Serializable {
 		this.blockY = block.getY();
 		this.blockZ = block.getZ();
 		this.worldId = block.getWorld().getUID();
+		
+		// target location
 		this.targetX = target.getX();
 		this.targetY = target.getY();
 		this.targetZ = target.getZ();
+		this.targetYaw = target.getYaw();
+		this.targetPitch = target.getPitch();
+		
 		this.creatorId = creatorId;
 		this.creatorName = creatorName;
 	}
@@ -59,7 +66,7 @@ class StorageModel implements Serializable {
 	
 	public Location getTargetLocation()
 	{
-		return new Location(getWorld(), this.targetX, this.targetY, this.targetZ);
+		return new Location(getWorld(), this.targetX, this.targetY, this.targetZ, this.targetYaw, this.targetPitch);
 	}
 	
 	public Player getCreator()
