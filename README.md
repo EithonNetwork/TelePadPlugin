@@ -29,6 +29,10 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 0.3 (2015-03-15)
+
+* CHANGE: Replaced the command "/telepad target <name>" with the command "/telepad link <pad name 1> < pad name 2>" that links two pads together. (Both jumps to the other pad).
+
 ### 0.2 (2015-03-10)
 
 * First working version

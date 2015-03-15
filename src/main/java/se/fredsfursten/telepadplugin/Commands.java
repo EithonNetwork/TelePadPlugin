@@ -10,10 +10,10 @@ import se.fredsfursten.plugintools.Misc;
 
 public class Commands {
 	private static Commands singleton = null;
-	private static final String ADD_COMMAND = "/telepad add <name> <up speed> [<forward speed>]";
+	private static final String ADD_COMMAND = "/telepad add <name>";
 	private static final String GOTO_COMMAND = "/telepad goto <name>";
 	private static final String REMOVE_COMMAND = "/telepad remove <name>";
-	private static final String TARGET_COMMAND = "/telepad target <name>";
+	private static final String LINK_COMMAND = "/telepad link <name 1> <name 2>";
 	private static final String RULES_COMMAND_BEGINNING = "/rules";
 
 	private JavaPlugin plugin = null;
@@ -77,23 +77,31 @@ public class Commands {
 		player.sendMessage(String.format("TelePad %s has been removed.", name));
 	}
 
-	void targetCommand(Player player, String[] args)
+	void linkCommand(Player player, String[] args)
 	{
 		if (!verifyPermission(player, "telepad.target")) return;
-		if (!arrayLengthIsWithinInterval(args, 2, 2)) {
-			player.sendMessage(TARGET_COMMAND);
+		if (!arrayLengthIsWithinInterval(args, 3, 3)) {
+			player.sendMessage(LINK_COMMAND);
 			return;
 		}
-		String name = args[1];
-		TelePadInfo info = this.allTelePads.getByName(name);
-		if (info == null)
+		String name1 = args[1];
+		TelePadInfo info1 = this.allTelePads.getByName(name1);
+		if (info1 == null)
 		{
-			player.sendMessage("Unknown telepad: " + name);
+			player.sendMessage("Unknown telepad: " + name1);
+			return;	
+		}
+		String name2 = args[2];
+		TelePadInfo info2 = this.allTelePads.getByName(name2);
+		if (info2 == null)
+		{
+			player.sendMessage("Unknown telepad: " + name1);
 			return;	
 		}
 		
-		info.setTarget(player.getLocation());
-		player.sendMessage(String.format("TelePad %s now has a target destination", name));
+		info1.setTarget(info2.getLocation());
+		info2.setTarget(info1.getLocation());
+		player.sendMessage(String.format("TelePad %s and %s now have each other as target destinations.", name1, name2));
 	}
 
 	void gotoCommand(Player player, String[] args)
