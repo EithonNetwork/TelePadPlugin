@@ -1,7 +1,8 @@
-TeleportAfterTicks: 40
-BlindnessTicks: 100
-NauseaTicks: 100
-DisableEffectsAfterTicks: 35
+TeleportAfterTicks: 100
+BlindnessTicks: 0
+NauseaTicks: 200
+SlownessTicks: 0
+DisableEffectsAfterTicks: 120
 
 
 

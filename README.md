@@ -29,6 +29,12 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 1.0 (2015-03-15)
+
+* NEW: Added SlownessTicks as a new configuration parameter
+* NEW: Added "/teleport reload" command that loads the configuration file.
+* CHANGE: Now stops the user before teleporting
+
 ### 0.3 (2015-03-15)
 
 * CHANGE: Replaced the command "/telepad target <name>" with the command "/telepad link <pad name 1> < pad name 2>" that links two pads together. (Both jumps to the other pad).

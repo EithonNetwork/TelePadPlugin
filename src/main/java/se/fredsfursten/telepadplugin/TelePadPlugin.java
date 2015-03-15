@@ -77,7 +77,7 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 		String command = args[0].toLowerCase();
 		if (command.equals("add")) {
 			Commands.get().addCommand(player, args);
-		} else if (command.equals("target")) {
+		} else if (command.equals("link")) {
 			Commands.get().linkCommand(player, args);
 		} else if (command.equals("remove")) {
 			Commands.get().removeCommand(player, args);
@@ -85,6 +85,8 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 			Commands.get().listCommand(player);
 		} else if (command.equals("goto")) {
 			Commands.get().gotoCommand(player, args);
+		} else if (command.equals("reload")) {
+			Commands.get().reloadCommand(player, args);
 		} else {
 			sender.sendMessage("Could not understand command.");
 			return false;
@@ -102,4 +104,10 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 	public static FileConfiguration getPluginConfig()
 	{
 		return configuration.getFileConfiguration();
-	}}
+	}
+	
+	public static void reloadConfiguration()
+	{
+		configuration.load();
+	}
+}

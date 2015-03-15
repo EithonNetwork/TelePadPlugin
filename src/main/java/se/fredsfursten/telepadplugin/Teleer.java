@@ -23,10 +23,11 @@ public class Teleer {
 	private PlayerInfo<Object> playersWithTemporaryTelePause = null;
 	private AllTelePads allTelePads = null;
 	private JavaPlugin plugin = null;
-	private long ticksBeforeTele = 40;
-	private long nauseaTicks = 100;
-	private long blindnessTicks = 100;
-	private long disableEffectsAfterTicks = 5;
+	private long ticksBeforeTele;
+	private long nauseaTicks;
+	private long slownessTicks;
+	private long blindnessTicks;
+	private long disableEffectsAfterTicks;
 
 	private Teleer() {
 		this.allTelePads = AllTelePads.get();
@@ -45,10 +46,7 @@ public class Teleer {
 		this.playersThatHasBeenInformedToReadTheRules = new PlayerInfo<Object>();
 		this.playersWithTemporaryTelePause = new PlayerInfo<Object>();
 		this.playersAboutToTele = new PlayerInfo<TelePadInfo>();
-		this.ticksBeforeTele = TelePadPlugin.getPluginConfig().getInt("TeleportAfterTicks");
-		this.nauseaTicks = TelePadPlugin.getPluginConfig().getInt("NauseaTicks");
-		this.blindnessTicks = TelePadPlugin.getPluginConfig().getInt("BlindnessTicks");
-		this.disableEffectsAfterTicks = TelePadPlugin.getPluginConfig().getInt("DisableEffectsAfterTicks");
+		loadConfiguration();
 	}
 
 	void disable() {
@@ -68,7 +66,10 @@ public class Teleer {
 			maybeTellPlayerToReadTheRules(player);
 			return;
 		}
-		//if (hasTemporaryTelePause(player)) return;
+		if (hasTemporaryTelePause(player)) {
+			playerCanTele(player, true);
+			return;
+		}
 		if (isAboutToTele(player)) return;
 		
 		float oldWalkSpeed = stopPlayer(player);
@@ -90,6 +91,7 @@ public class Teleer {
 	}
 
 	private void teleSoon(Player player, TelePadInfo info, float oldWalkSpeed) {
+		final float nextWalkSpeed =  (oldWalkSpeed > 0.0F ? oldWalkSpeed : 1.0F);
 		setPlayerIsAboutToTele(player, info, true);
 		ArrayList<PotionEffect> effects = new ArrayList<PotionEffect>();
 		PotionEffect nausea = null;
@@ -98,6 +100,12 @@ public class Teleer {
 			effects.add(nausea);
 		}
 		final boolean hasNausea = nausea != null;
+		PotionEffect slowness = null;
+		if (this.nauseaTicks > 0) {
+			slowness = new PotionEffect(PotionEffectType.SLOW, (int) this.slownessTicks, 4);
+			effects.add(slowness);
+		}
+		final boolean hasSlowness = slowness != null;
 		PotionEffect blindness = null;
 		if (this.blindnessTicks > 0) {
 			blindness = new PotionEffect(PotionEffectType.BLINDNESS, (int) this.blindnessTicks, 4);
@@ -108,8 +116,9 @@ public class Teleer {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
 			public void run() {
-				player.setWalkSpeed(oldWalkSpeed);
+				player.setWalkSpeed(nextWalkSpeed);
 				if (hasNausea) player.removePotionEffect(PotionEffectType.CONFUSION);
+				if (hasSlowness) player.removePotionEffect(PotionEffectType.SLOW);
 				if (hasBlindness) player.removePotionEffect(PotionEffectType.BLINDNESS);
 			}
 		}, this.disableEffectsAfterTicks);
@@ -117,25 +126,22 @@ public class Teleer {
 			public void run() {
 				if (!isAboutToTele(player)) return;
 				setPlayerIsAboutToTele(player, info, false);
+				playerCanTele(player, false);
 				tele(player, info);
 			}
 		}, this.ticksBeforeTele);
 	}
 
 	private float stopPlayer(Player player) {
-		player.setVelocity(new Vector(0.0, 0.0, 0.0));
 		float walkSpeed = player.getWalkSpeed();
 		player.setWalkSpeed(0.0F);
+		player.setVelocity(new Vector(0.0, 0.0, 0.0));
 		return walkSpeed;
 	}
 
 	void tele(Player player, TelePadInfo info) {
 		Location targetLocation = info.getTargetLocation();
 		player.teleport(targetLocation);
-	}
-
-	boolean isGoingDown(Location from, Location to) {
-		return to.getY() < from.getY();
 	}
 
 	private void maybeTellPlayerToReadTheRules(Player player) {
@@ -179,5 +185,14 @@ public class Teleer {
 
 	private boolean hasReadRules(Player player) {
 		return player.hasPermission("telepad.tele");
+	}
+
+	public void loadConfiguration() {
+		TelePadPlugin.reloadConfiguration();
+		this.ticksBeforeTele = TelePadPlugin.getPluginConfig().getInt("TeleportAfterTicks");
+		this.nauseaTicks = TelePadPlugin.getPluginConfig().getInt("NauseaTicks");
+		this.slownessTicks = TelePadPlugin.getPluginConfig().getInt("SlownessTicks");
+		this.blindnessTicks = TelePadPlugin.getPluginConfig().getInt("BlindnessTicks");
+		this.disableEffectsAfterTicks = TelePadPlugin.getPluginConfig().getInt("DisableEffectsAfterTicks");
 	}
 }

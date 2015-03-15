@@ -12,6 +12,7 @@ public class Commands {
 	private static Commands singleton = null;
 	private static final String ADD_COMMAND = "/telepad add <name>";
 	private static final String GOTO_COMMAND = "/telepad goto <name>";
+	private static final String RELOAD_COMMAND = "/telepad reload";
 	private static final String REMOVE_COMMAND = "/telepad remove <name>";
 	private static final String LINK_COMMAND = "/telepad link <name 1> <name 2>";
 	private static final String RULES_COMMAND_BEGINNING = "/rules";
@@ -95,7 +96,7 @@ public class Commands {
 		TelePadInfo info2 = this.allTelePads.getByName(name2);
 		if (info2 == null)
 		{
-			player.sendMessage("Unknown telepad: " + name1);
+			player.sendMessage("Unknown telepad: " + name2);
 			return;	
 		}
 		
@@ -122,6 +123,17 @@ public class Commands {
 		// Temporarily disable jump for this player to avoid an immediate jump at the jump pad
 		Teleer.get().playerCanTele(player, false);
 		player.sendMessage(String.format("You have been teleported to TelePad %s.", name));
+	}
+
+	void reloadCommand(Player player, String[] args)
+	{
+		if (!verifyPermission(player, "telepad.reload")) return;
+		if (args.length < 1) {
+			player.sendMessage(RELOAD_COMMAND);
+			return;
+		}
+		Teleer.get().loadConfiguration();
+		player.sendMessage("The configuration file has been reloaded.");
 	}
 
 	void listCommand(Player player)
