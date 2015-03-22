@@ -13,14 +13,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
-import se.fredsfursten.plugintools.PlayerInfo;
+import se.fredsfursten.plugintools.PlayerCollection;
 
 public class Teleer {
 	private static Teleer singleton = null;
 
-	private PlayerInfo<Object> playersThatHasBeenInformedToReadTheRules = null;
-	private PlayerInfo<TelePadInfo> playersAboutToTele = null;
-	private PlayerInfo<Object> playersWithTemporaryTelePause = null;
+	private PlayerCollection<Object> playersThatHasBeenInformedToReadTheRules = null;
+	private PlayerCollection<TelePadInfo> playersAboutToTele = null;
+	private PlayerCollection<Object> playersWithTemporaryTelePause = null;
 	private AllTelePads allTelePads = null;
 	private JavaPlugin plugin = null;
 	private long ticksBeforeTele;
@@ -43,9 +43,9 @@ public class Teleer {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.playersThatHasBeenInformedToReadTheRules = new PlayerInfo<Object>();
-		this.playersWithTemporaryTelePause = new PlayerInfo<Object>();
-		this.playersAboutToTele = new PlayerInfo<TelePadInfo>();
+		this.playersThatHasBeenInformedToReadTheRules = new PlayerCollection<Object>();
+		this.playersWithTemporaryTelePause = new PlayerCollection<Object>();
+		this.playersAboutToTele = new PlayerCollection<TelePadInfo>();
 		loadConfiguration();
 	}
 
