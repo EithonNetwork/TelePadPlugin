@@ -29,6 +29,10 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 1.2 (2015-04-02)
+
+* NEW: Now stores the direction the player is looking at when using add
+
 ### 1.0 (2015-03-15)
 
 * NEW: Added SlownessTicks as a new configuration parameter

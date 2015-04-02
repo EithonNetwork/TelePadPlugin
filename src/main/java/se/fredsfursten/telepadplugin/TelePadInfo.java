@@ -6,19 +6,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 class TelePadInfo {
-	private Location location;
+	private Location sourceLocation;
 	private Location targetLocation;
 	private String name;
 	private UUID creatorId;
 	private String creatorName;
 
-	TelePadInfo(String name, Location location, Location targetLocation, Player creator)
+	TelePadInfo(String name, Location sourceLocation, Location targetLocation, Player creator)
 	{
 		this.name = name;
-		this.location = location;
+		this.sourceLocation = sourceLocation;
 		this.targetLocation = targetLocation;
 		if (creator != null)
 		{
@@ -48,12 +47,12 @@ class TelePadInfo {
 		return this.name;
 	}
 
-	Location getLocation() {
-		return this.location;
+	Location getSource() {
+		return this.sourceLocation;
 	}
 
 	String getBlockHash() {
-		return TelePadInfo.toBlockHash(this.location);
+		return TelePadInfo.toBlockHash(this.sourceLocation);
 	}
 
 	static String toBlockHash(Location location)
@@ -80,11 +79,11 @@ class TelePadInfo {
 	}
 
 	StorageModel getStorageModel() {
-		return new StorageModel(getName(), getLocation().getBlock(), getTargetLocation(), getCreatorId(), getCreatorName());
+		return new StorageModel(getName(), getSource(), getTargetLocation(), getCreatorId(), getCreatorName());
 
 	}
 
 	public String toString() {
-		return String.format("%s (%s): from %s toy %s", getName(), getCreatorName(), getLocation().getBlock().toString(), getTargetLocation().toString());
+		return String.format("%s (%s): from %s toy %s", getName(), getCreatorName(), getSource().getBlock().toString(), getTargetLocation().toString());
 	}
 }

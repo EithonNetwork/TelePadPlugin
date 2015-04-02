@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 class StorageModel implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -17,21 +16,25 @@ class StorageModel implements Serializable {
 	private double targetZ;
 	private float targetYaw;
 	private float targetPitch;
-	private double blockX;
-	private double blockY;
-	private double blockZ;
+	private double sourceBlockX;
+	private double sourceBlockY;
+	private double sourceBlockZ;
+	private float sourceYaw;
+	private float sourcePitch;
 	private UUID worldId;
 	private String name;
 	private UUID creatorId;
 	private String creatorName;
 	
-	public StorageModel(String name, Block block, Location target, UUID creatorId, String creatorName)
+	public StorageModel(String name, Location source, Location target, UUID creatorId, String creatorName)
 	{
 		this.name = name;
-		this.blockX =block.getX();
-		this.blockY = block.getY();
-		this.blockZ = block.getZ();
-		this.worldId = block.getWorld().getUID();
+		this.sourceBlockX =source.getBlockX();
+		this.sourceBlockY = source.getBlockY();
+		this.sourceBlockZ = source.getBlockZ();
+		this.sourceYaw = source.getYaw();
+		this.sourcePitch = source.getPitch();
+		this.worldId = source.getWorld().getUID();
 		
 		// target location
 		this.targetX = target.getX();
@@ -61,7 +64,7 @@ class StorageModel implements Serializable {
 	
 	public Location getLocation()
 	{
-		return new Location(getWorld(), this.blockX, this.blockY, this.blockZ);
+		return new Location(getWorld(), this.sourceBlockX, this.sourceBlockY, this.sourceBlockZ, this.sourceYaw, this.sourcePitch);
 	}
 	
 	public Location getTargetLocation()
