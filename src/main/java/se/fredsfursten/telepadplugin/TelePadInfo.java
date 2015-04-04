@@ -52,7 +52,7 @@ class TelePadInfo {
 	}
 
 	Location getSourceAsTarget() {
-		Location location = this.sourceLocation;
+		Location location = this.sourceLocation.clone();
 		location.setX(location.getX() + 0.5);
 		location.setZ(location.getZ() + 0.5);
 		return location;
