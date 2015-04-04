@@ -29,6 +29,10 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 1.3 (2015-04-04)
+
+* CHANGE: Now targets the middle of a telepad, not the corner of the telepad.
+
 ### 1.2 (2015-04-02)
 
 * NEW: Now stores the direction the player is looking at when using add

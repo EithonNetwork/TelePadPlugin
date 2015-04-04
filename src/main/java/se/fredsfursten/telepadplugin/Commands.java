@@ -100,8 +100,8 @@ public class Commands {
 			return;	
 		}
 		
-		info1.setTarget(info2.getSource());
-		info2.setTarget(info1.getSource());
+		info1.setTarget(info2.getSourceAsTarget());
+		info2.setTarget(info1.getSourceAsTarget());
 		player.sendMessage(String.format("TelePad %s and %s now have each other as target destinations.", name1, name2));
 	}
 
@@ -119,7 +119,7 @@ public class Commands {
 			player.sendMessage("Unknown telepad: " + name);
 			return;			
 		}
-		player.teleport(info.getSource());
+		player.teleport(info.getSourceAsTarget());
 		// Temporarily disable jump for this player to avoid an immediate jump at the jump pad
 		Teleer.get().playerCanTele(player, false);
 		player.sendMessage(String.format("You have been teleported to TelePad %s.", name));

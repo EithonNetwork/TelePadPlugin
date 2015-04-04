@@ -51,6 +51,13 @@ class TelePadInfo {
 		return this.sourceLocation;
 	}
 
+	Location getSourceAsTarget() {
+		Location location = this.sourceLocation;
+		location.setX(location.getX() + 0.5);
+		location.setZ(location.getZ() + 0.5);
+		return location;
+	}
+
 	String getBlockHash() {
 		return TelePadInfo.toBlockHash(this.sourceLocation);
 	}
