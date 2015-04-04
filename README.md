@@ -29,9 +29,9 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
-### 1.3 (2015-04-04)
+### 1.4 (2015-04-04)
 
-* CHANGE: Now targets the middle of a telepad, not the corner of the telepad.
+* NEW: Now uses EithonLibraryPlugin.
 
 ### 1.2 (2015-04-02)
 
