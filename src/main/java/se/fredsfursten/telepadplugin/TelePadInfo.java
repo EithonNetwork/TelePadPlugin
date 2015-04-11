@@ -64,6 +64,7 @@ class TelePadInfo {
 
 	static String toBlockHash(Location location)
 	{
+		if (location == null) return null;
 		return toBlockHash(location.getBlock());
 	}
 

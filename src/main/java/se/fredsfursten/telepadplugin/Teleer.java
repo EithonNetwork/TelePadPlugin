@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
 import se.fredsfursten.plugintools.PlayerCollection;
+import se.fredsfursten.plugintools.PluginConfig;
 
 public class Teleer {
 	private static Teleer singleton = null;
@@ -188,11 +189,10 @@ public class Teleer {
 	}
 
 	public void loadConfiguration() {
-		TelePadPlugin.reloadConfiguration();
-		this.ticksBeforeTele = TelePadPlugin.getPluginConfig().getInt("TeleportAfterTicks");
-		this.nauseaTicks = TelePadPlugin.getPluginConfig().getInt("NauseaTicks");
-		this.slownessTicks = TelePadPlugin.getPluginConfig().getInt("SlownessTicks");
-		this.blindnessTicks = TelePadPlugin.getPluginConfig().getInt("BlindnessTicks");
-		this.disableEffectsAfterTicks = TelePadPlugin.getPluginConfig().getInt("DisableEffectsAfterTicks");
+		this.ticksBeforeTele = PluginConfig.get().getFileConfiguration().getInt("TeleportAfterTicks");
+		this.nauseaTicks = PluginConfig.get().getFileConfiguration().getInt("NauseaTicks");
+		this.slownessTicks = PluginConfig.get().getFileConfiguration().getInt("SlownessTicks");
+		this.blindnessTicks = PluginConfig.get().getFileConfiguration().getInt("BlindnessTicks");
+		this.disableEffectsAfterTicks = PluginConfig.get().getFileConfiguration().getInt("DisableEffectsAfterTicks");
 	}
 }

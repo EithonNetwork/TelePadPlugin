@@ -3,6 +3,7 @@ BlindnessTicks: 0
 NauseaTicks: 200
 SlownessTicks: 0
 DisableEffectsAfterTicks: 120
+DoDebugPrint: 0
 
 
 

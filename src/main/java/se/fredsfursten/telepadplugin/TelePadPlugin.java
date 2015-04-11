@@ -23,16 +23,10 @@ import se.fredsfursten.telepadplugin.Teleer;
 
 public final class TelePadPlugin extends JavaPlugin implements Listener {
 	private static File telePadStorageFile;
-	private static PluginConfig configuration;
 
 	@Override
 	public void onEnable() {
-		if (configuration == null) {
-			configuration = new PluginConfig(this, "config.yml");
-		} else {
-			configuration.load();
-		}
-
+		if (!PluginConfig.isEnabled()) PluginConfig.enable(this, "config.yml");
 		telePadStorageFile = new File(getDataFolder(), "telepads.bin");
 		getServer().getPluginManager().registerEvents(this, this);		
 		Teleer.get().enable(this);
@@ -99,15 +93,5 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 	public static File getStorageFile()
 	{
 		return telePadStorageFile;
-	}
-
-	public static FileConfiguration getPluginConfig()
-	{
-		return configuration.getFileConfiguration();
-	}
-	
-	public static void reloadConfiguration()
-	{
-		configuration.load();
 	}
 }

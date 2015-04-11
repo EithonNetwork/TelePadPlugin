@@ -86,4 +86,16 @@ class StorageModel implements Serializable {
 		}
 		return this.creatorName;
 	}
+	
+	public String toString() {
+		Location fromLocation = getLocation();
+		String from = null;
+		if (fromLocation != null) from = fromLocation.toString();
+		Location toLocation = getTargetLocation();
+		String to = null;
+		if (toLocation != null) to = toLocation.toString();
+		
+		return String.format("%s in world %s created by %s: %s -> %s",
+				name, getWorld().getName(), getCreatorName(), from, to);
+	}
 }

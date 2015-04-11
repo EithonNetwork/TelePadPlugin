@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import se.fredsfursten.plugintools.Misc;
 import se.fredsfursten.plugintools.SavingAndLoadingBinary;
 
 public class AllTelePads {
@@ -85,6 +86,7 @@ public class AllTelePads {
 
 	private void rememberAllData(ArrayList<StorageModel> storageModelList) {
 		for (StorageModel storageModel : storageModelList) {
+			Misc.debugInfo("StorageModel: %s", storageModel.toString());
 			this.add(TelePadInfo.createTelePadInfo(storageModel));
 		}
 	}
