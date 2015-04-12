@@ -106,7 +106,7 @@ public class AllTelePads {
 		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
 		this.telePadsByName = new HashMap<String, TelePadInfo>();
 		for (int i = 0; i < array.size(); i++) {
-			this.add(TelePadInfo.createTelePadInfo((JSONObject) array.get(i)));
+			this.add(TelePadInfo.fromJson((JSONObject) array.get(i)));
 		}
 	}
 }

@@ -16,15 +16,6 @@ class TelePadInfo {
 	private String name;
 	private UUID creatorId;
 	private String creatorName;
-	
-	public JSONObject toJson() {
-		JSONObject json = new JSONObject();
-		json.put("name", this.name);
-		json.put("sourceLocation", Json.fromLocation(this.sourceLocation, true));
-		json.put("targetLocation", Json.fromLocation(this.targetLocation, true));
-		json.put("creator", Json.fromPlayer(creatorId, creatorName));
-		return json;
-	}
 
 	TelePadInfo(String name, Location sourceLocation, Location targetLocation, Player creator)
 	{
@@ -49,8 +40,18 @@ class TelePadInfo {
 		this.creatorId = creatorId;
 		this.creatorName = creatorName;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJson() {
+		JSONObject json = new JSONObject();
+		json.put("name", this.name);
+		json.put("sourceLocation", Json.fromLocation(this.sourceLocation, true));
+		json.put("targetLocation", Json.fromLocation(this.targetLocation, true));
+		json.put("creator", Json.fromPlayer(this.creatorId, this.creatorName));
+		return json;
+	}
 
-	public static TelePadInfo createTelePadInfo(JSONObject json)
+	public static TelePadInfo fromJson(JSONObject json)
 	{
 		String name = (String) json.get("name");
 		Location sourceLocation = Json.toLocation((JSONObject)json.get("sourceLocation"), null);
