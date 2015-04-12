@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
+
+import se.fredsfursten.plugintools.Json;
 
 class TelePadInfo {
 	private Location sourceLocation;
@@ -13,6 +16,15 @@ class TelePadInfo {
 	private String name;
 	private UUID creatorId;
 	private String creatorName;
+	
+	public JSONObject toJson() {
+		JSONObject json = new JSONObject();
+		json.put("name", this.name);
+		json.put("sourceLocation", Json.fromLocation(this.sourceLocation, true));
+		json.put("targetLocation", Json.fromLocation(this.targetLocation, true));
+		json.put("creator", Json.fromPlayer(creatorId, creatorName));
+		return json;
+	}
 
 	TelePadInfo(String name, Location sourceLocation, Location targetLocation, Player creator)
 	{
@@ -29,10 +41,24 @@ class TelePadInfo {
 		}
 	}
 
-	public static TelePadInfo createTelePadInfo(StorageModel storageModel)
+	TelePadInfo(String name, Location sourceLocation, Location targetLocation, UUID creatorId, String creatorName)
 	{
-		Player creator = storageModel.getCreator();
-		return new TelePadInfo(storageModel.getName(), storageModel.getLocation(), storageModel.getTargetLocation(), creator);
+		this.name = name;
+		this.sourceLocation = sourceLocation;
+		this.targetLocation = targetLocation;
+		this.creatorId = creatorId;
+		this.creatorName = creatorName;
+	}
+
+	public static TelePadInfo createTelePadInfo(JSONObject json)
+	{
+		String name = (String) json.get("name");
+		Location sourceLocation = Json.toLocation((JSONObject)json.get("sourceLocation"), null);
+		Location targetLocation = Json.toLocation((JSONObject)json.get("targetLocation"), null);
+		UUID creatorId = Json.toPlayerId((JSONObject) json.get("creator"));
+		String creatorName = Json.toPlayerName((JSONObject) json.get("creator"));
+		
+		return new TelePadInfo(name, sourceLocation, targetLocation, creatorId, creatorName);
 	}
 
 	Location getTargetLocation() {
@@ -84,11 +110,6 @@ class TelePadInfo {
 
 	UUID getCreatorId() {
 		return this.creatorId;
-	}
-
-	StorageModel getStorageModel() {
-		return new StorageModel(getName(), getSource(), getTargetLocation(), getCreatorId(), getCreatorName());
-
 	}
 
 	public String toString() {

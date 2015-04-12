@@ -2,13 +2,23 @@ package se.fredsfursten.telepadplugin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javafx.scene.paint.RadialGradient;
+
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
+import se.fredsfursten.plugintools.Json;
 import se.fredsfursten.plugintools.Misc;
 import se.fredsfursten.plugintools.SavingAndLoadingBinary;
 
@@ -61,62 +71,36 @@ public class AllTelePads {
 		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
 		this.telePadsByName = new HashMap<String, TelePadInfo>();
 
-		ArrayList<StorageModel> telePadStorageList = loadData(plugin);
-		if (telePadStorageList == null) return;
-		rememberAllData(telePadStorageList);
-		this._plugin.getLogger().info(String.format("Loaded %d TelePads", telePadStorageList.size()));
-	}
-
-	private ArrayList<StorageModel> loadData(JavaPlugin plugin) {
-		File file = TelePadPlugin.getStorageFile();
-		if(!file.exists()) return null;
-		ArrayList<StorageModel> telePadStorageList = null;
-		try {
-			telePadStorageList = SavingAndLoadingBinary.load(file);
-		} catch (FileNotFoundException e) {
-			plugin.getLogger().info("No tele pad data file found.");
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			plugin.getLogger().info("Failed to load data.");
-			return null;
+		JSONArray jsonArray = Json.loadDataArray(TelePadPlugin.getStorageFile());
+		if ((jsonArray != null) && (jsonArray.size() > 0)) {
+			Misc.info("Loaded %d TelePads", jsonArray.size());
+		} else {
+			Misc.info("No TelePads loaded.");
+			return;
 		}
-		return telePadStorageList;
+		rememberAllData(jsonArray);
 	}
 
-	private void rememberAllData(ArrayList<StorageModel> storageModelList) {
-		for (StorageModel storageModel : storageModelList) {
-			Misc.debugInfo("StorageModel: %s", storageModel.toString());
-			this.add(TelePadInfo.createTelePadInfo(storageModel));
+	private void rememberAllData(JSONArray telePads) {
+		for (int i = 0; i < telePads.size(); i++) {
+			this.add(TelePadInfo.createTelePadInfo((JSONObject) telePads.get(i)));
 		}
 	}
 
 	void save() {
-		ArrayList<StorageModel> telePadStorageList = getAllData();
-		boolean success = saveData(telePadStorageList);
-		if (success) {
-			this._plugin.getLogger().info(String.format("Saved %d TelePads", telePadStorageList.size()));
+		int telePads = Json.saveData(TelePadPlugin.getStorageFile(), getAllData());
+		if (telePads > 0) {
+			Misc.info("Saved %d TelePads", telePads);
 		} else {
-			this._plugin.getLogger().info("Failed to save data.");			
+			Misc.info("Saved no TelePads.");		
 		}
 	}
 
-	private ArrayList<StorageModel> getAllData() {
-		ArrayList<StorageModel> telePadStorageList = new ArrayList<StorageModel>();
+	private JSONArray getAllData() {
+		JSONArray telePads = new JSONArray();
 		for (TelePadInfo telePadInfo : getAll()) {
-			telePadStorageList.add(telePadInfo.getStorageModel());
+			telePads.add(telePadInfo.toJson());
 		}
-		return telePadStorageList;
-	}
-
-	private boolean saveData(ArrayList<StorageModel> telePadStorageList) {
-		File file = TelePadPlugin.getStorageFile();
-		try {
-			SavingAndLoadingBinary.save(telePadStorageList, file);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		return telePads;
 	}
 }

@@ -1,8 +1,9 @@
 name: TelePadPlugin
 main: se.fredsfursten.telepadplugin.TelePadPlugin
-version: 1.4.1
+version: 1.5
 author: vanbrayne
 description: A Minecraft plugin for so called "Jump Pad" functionality
+depend: [EithonLibraryPlugin]
 commands:
   telepad:
     description: Control jump pads

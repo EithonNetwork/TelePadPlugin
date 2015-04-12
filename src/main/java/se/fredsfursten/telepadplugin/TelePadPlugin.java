@@ -27,7 +27,7 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		if (!PluginConfig.isEnabled()) PluginConfig.enable(this, "config.yml");
-		telePadStorageFile = new File(getDataFolder(), "telepads.bin");
+		telePadStorageFile = new File(getDataFolder(), "telepads.json");
 		getServer().getPluginManager().registerEvents(this, this);		
 		Teleer.get().enable(this);
 		Commands.get().enable(this);
