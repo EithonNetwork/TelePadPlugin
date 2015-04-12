@@ -19,9 +19,8 @@ import se.fredsfursten.plugintools.PluginConfig;
 public class Teleer {
 	private static Teleer singleton = null;
 
-	private PlayerCollection<Object> playersThatHasBeenInformedToReadTheRules = null;
 	private PlayerCollection<TelePadInfo> playersAboutToTele = null;
-	private PlayerCollection<Object> playersWithTemporaryTelePause = null;
+	private PlayerCollection<TelePadInfo> playersWithTemporaryTelePause = null;
 	private AllTelePads allTelePads = null;
 	private JavaPlugin plugin = null;
 	private long ticksBeforeTele;
@@ -44,9 +43,8 @@ public class Teleer {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.playersThatHasBeenInformedToReadTheRules = new PlayerCollection<Object>();
-		this.playersWithTemporaryTelePause = new PlayerCollection<Object>();
-		this.playersAboutToTele = new PlayerCollection<TelePadInfo>();
+		this.playersWithTemporaryTelePause = new PlayerCollection<TelePadInfo>(new TelePadInfo());
+		this.playersAboutToTele = new PlayerCollection<TelePadInfo>(new TelePadInfo());
 		loadConfiguration();
 	}
 
@@ -58,15 +56,16 @@ public class Teleer {
 		Location location = pressurePlate.getLocation();
 		TelePadInfo info = this.allTelePads.getByLocation(location);
 		if (info == null) {
-			mustReadRules(player, true);
 			playerCanTele(player, true);
 			return;
 		}
 		
+		/*
 		if (!hasReadRules(player)) {
 			maybeTellPlayerToReadTheRules(player);
 			return;
 		}
+		*/
 		if (hasTemporaryTelePause(player)) {
 			playerCanTele(player, true);
 			return;
@@ -145,13 +144,6 @@ public class Teleer {
 		player.teleport(targetLocation);
 	}
 
-	private void maybeTellPlayerToReadTheRules(Player player) {
-		if (shouldReadRules(player)) {
-			player.sendMessage("Please read the global rules (/rules) to get access to the tele pads.");
-			mustReadRules(player, true);
-		}
-	}
-
 	void playerCanTele(Player player, boolean canTele) {
 		if (canTele){
 			if (hasTemporaryTelePause(player)) {
@@ -159,33 +151,13 @@ public class Teleer {
 			}
 		} else {
 			if (!hasTemporaryTelePause(player)) {
-				this.playersWithTemporaryTelePause.put(player, 1);
+				this.playersWithTemporaryTelePause.put(player, new TelePadInfo());
 			}
 		}
-	}
-
-	private void mustReadRules(Player player, boolean mustReadRules) {
-		if (mustReadRules) {
-			if (!shouldReadRules(player)) {
-				this.playersThatHasBeenInformedToReadTheRules.put(player, 1);
-			}
-		} else {
-			if (shouldReadRules(player)) {
-				this.playersThatHasBeenInformedToReadTheRules.remove(player);
-			}
-		}
-	}
-
-	private boolean shouldReadRules(Player player) {
-		return !this.playersThatHasBeenInformedToReadTheRules.hasInformation(player);
 	}
 
 	private boolean hasTemporaryTelePause(Player player) {
 		return this.playersWithTemporaryTelePause.hasInformation(player);
-	}
-
-	private boolean hasReadRules(Player player) {
-		return player.hasPermission("telepad.tele");
 	}
 
 	public void loadConfiguration() {

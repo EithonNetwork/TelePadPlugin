@@ -19,6 +19,7 @@ permissions:
     telepad.remove: true
     telepad.list: true
     telepad.goto: true
+    telepad.tele: true
   telepad.add:
     description: Access to /telepad add command
     default: op
@@ -37,6 +38,6 @@ permissions:
   telepad.reload:
     description: Access to /telepad reload command
     default: op
-  telepad.jump:
-    description: Can jump from a telepad
+  telepad.tele:
+    description: Can teleport from a telepad
     default: op

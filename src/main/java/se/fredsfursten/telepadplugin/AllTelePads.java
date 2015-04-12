@@ -33,11 +33,11 @@ public class AllTelePads {
 
 	void add(TelePadInfo info) {
 		this.telePadsByBlock.put(info.getBlockHash(), info);
-		this.telePadsByName.put(info.getName(), info);
+		this.telePadsByName.put(info.getTelePadName(), info);
 	}
 
 	void remove(TelePadInfo info) {
-		this.telePadsByName.remove(info.getName());
+		this.telePadsByName.remove(info.getTelePadName());
 		this.telePadsByBlock.remove(info.getBlockHash());
 	}
 
@@ -106,7 +106,9 @@ public class AllTelePads {
 		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
 		this.telePadsByName = new HashMap<String, TelePadInfo>();
 		for (int i = 0; i < array.size(); i++) {
-			this.add(TelePadInfo.fromJson((JSONObject) array.get(i)));
+			TelePadInfo info = new TelePadInfo();
+			info.fromJson((JSONObject) array.get(i));
+			this.add(info);
 		}
 	}
 }

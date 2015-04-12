@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import se.fredsfursten.plugintools.PluginConfig;
+import se.fredsfursten.plugintools.Misc;
 
 public final class TelePadPlugin extends JavaPlugin implements Listener {
 	private static File telePadStorageFile;
@@ -23,6 +23,7 @@ public final class TelePadPlugin extends JavaPlugin implements Listener {
 	public void onEnable() {
 		telePadStorageFile = new File(getDataFolder(), "telepads.json");
 		getServer().getPluginManager().registerEvents(this, this);		
+		Misc.enable(this);
 		Teleer.get().enable(this);
 		Commands.get().enable(this);
 	}
