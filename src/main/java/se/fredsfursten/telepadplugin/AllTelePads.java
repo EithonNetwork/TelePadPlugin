@@ -88,7 +88,7 @@ public class AllTelePads {
 			return;
 		}
 		Misc.info("Saving %d TelePads", telePads.size());
-		Json.save(TelePadPlugin.getStorageFile(), Json.fromBody("TelePad", 1, telePads));
+		Json.save(TelePadPlugin.getStorageFile(), Json.fromBody("TelePad", 1, (Object) telePads));
 	}
 
 	void load() {
@@ -97,7 +97,7 @@ public class AllTelePads {
 			Misc.debugInfo("File was empty.");
 			return;			
 		}
-		JSONArray array = Json.toBodyPayload(data);
+		JSONArray array = (JSONArray) Json.toBodyPayload(data);
 		if ((array == null) || (array.size() == 0)) {
 			Misc.debugInfo("The list of TelePads was empty.");
 			return;

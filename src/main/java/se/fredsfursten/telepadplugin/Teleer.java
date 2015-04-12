@@ -189,10 +189,11 @@ public class Teleer {
 	}
 
 	public void loadConfiguration() {
-		this.ticksBeforeTele = PluginConfig.get().getFileConfiguration().getInt("TeleportAfterTicks");
-		this.nauseaTicks = PluginConfig.get().getFileConfiguration().getInt("NauseaTicks");
-		this.slownessTicks = PluginConfig.get().getFileConfiguration().getInt("SlownessTicks");
-		this.blindnessTicks = PluginConfig.get().getFileConfiguration().getInt("BlindnessTicks");
-		this.disableEffectsAfterTicks = PluginConfig.get().getFileConfiguration().getInt("DisableEffectsAfterTicks");
+		PluginConfig config = PluginConfig.get(this.plugin);
+		this.ticksBeforeTele = config.getInt("TeleportAfterTicks", 0);
+		this.nauseaTicks = config.getInt("NauseaTicks", 0);
+		this.slownessTicks = config.getInt("SlownessTicks", 0);
+		this.blindnessTicks = config.getInt("BlindnessTicks", 0);
+		this.disableEffectsAfterTicks = config.getInt("DisableEffectsAfterTicks", 0);
 	}
 }

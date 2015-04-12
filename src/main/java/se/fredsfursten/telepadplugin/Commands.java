@@ -35,7 +35,7 @@ public class Commands {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		double seconds = PluginConfig.get().getDouble("SecondsBeforeLoad", 5.0);
+		double seconds = PluginConfig.get(plugin).getDouble("SecondsBeforeLoad", 5.0);
 		this.allTelePads.delayedLoad(plugin, seconds);
 	}
 

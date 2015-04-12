@@ -29,6 +29,10 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 2.0 (2015-04-12)
+
+* NEW: Uses JSON.
+
 ### 1.4 (2015-04-04)
 
 * NEW: Now uses EithonLibraryPlugin.
