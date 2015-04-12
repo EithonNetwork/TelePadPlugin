@@ -93,12 +93,16 @@ public class AllTelePads {
 
 	void load() {
 		JSONObject data = Json.load(TelePadPlugin.getStorageFile());
+		if (data == null) {
+			Misc.debugInfo("File was empty.");
+			return;			
+		}
 		JSONArray array = Json.toBodyPayload(data);
 		if ((array == null) || (array.size() == 0)) {
-			Misc.info("No TelePads loaded.");
+			Misc.debugInfo("The list of TelePads was empty.");
 			return;
 		}
-		Misc.info("Loading %d TelePads", array.size());
+		Misc.info("Restoring %d TelePads from loaded file.", array.size());
 		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
 		this.telePadsByName = new HashMap<String, TelePadInfo>();
 		for (int i = 0; i < array.size(); i++) {

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import se.fredsfursten.plugintools.Misc;
+import se.fredsfursten.plugintools.PluginConfig;
 
 public class Commands {
 	private static Commands singleton = null;
@@ -34,7 +35,8 @@ public class Commands {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.allTelePads.delayedLoad(plugin, 20.0);
+		double seconds = PluginConfig.get().getDouble("SecondsBeforeLoad", 5.0);
+		this.allTelePads.delayedLoad(plugin, seconds);
 	}
 
 	void disable() {
@@ -58,6 +60,7 @@ public class Commands {
 		createOrUpdateTelePad(player, name, upSpeed, forwardSpeed);
 		player.sendMessage(String.format("TelePad %s has been added.", name));
 		player.sendMessage(String.format("Now add a target destination with '/telepad target %s'.", name));
+		this.allTelePads.delayedSave(this.plugin, 0.0);
 	}
 
 	void removeCommand(Player player, String[] args)
@@ -76,6 +79,7 @@ public class Commands {
 		}
 		this.allTelePads.remove(info);
 		player.sendMessage(String.format("TelePad %s has been removed.", name));
+		this.allTelePads.delayedSave(this.plugin, 0.0);
 	}
 
 	void linkCommand(Player player, String[] args)
@@ -103,6 +107,7 @@ public class Commands {
 		info1.setTarget(info2.getSourceAsTarget());
 		info2.setTarget(info1.getSourceAsTarget());
 		player.sendMessage(String.format("TelePad %s and %s now have each other as target destinations.", name1, name2));
+		this.allTelePads.delayedSave(this.plugin, 0.0);
 	}
 
 	void gotoCommand(Player player, String[] args)
@@ -174,7 +179,6 @@ public class Commands {
 			if (player != null) {
 				Teleer.get().playerCanTele(player, false);
 			}
-			this.allTelePads.delayedSave(this.plugin, 0.0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
