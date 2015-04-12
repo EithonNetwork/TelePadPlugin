@@ -30,6 +30,8 @@ public class AllTelePads {
 	private JavaPlugin _plugin = null;
 
 	private AllTelePads() {
+		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
+		this.telePadsByName = new HashMap<String, TelePadInfo>();
 	}
 
 	static AllTelePads get() {
