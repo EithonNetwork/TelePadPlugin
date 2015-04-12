@@ -1,33 +1,23 @@
 package se.fredsfursten.telepadplugin;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import javafx.scene.paint.RadialGradient;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import se.fredsfursten.plugintools.Json;
 import se.fredsfursten.plugintools.Misc;
-import se.fredsfursten.plugintools.SavingAndLoadingBinary;
 
 public class AllTelePads {
 	private static AllTelePads singleton = null;
 
 	private HashMap<String, TelePadInfo> telePadsByBlock = null;
 	private HashMap<String, TelePadInfo> telePadsByName = null;
-	private JavaPlugin _plugin = null;
 
 	private AllTelePads() {
 		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
@@ -67,42 +57,52 @@ public class AllTelePads {
 		return this.telePadsByName.get(name);
 	}
 
-	void load(JavaPlugin plugin) {
-		this._plugin = plugin;
-
-		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
-		this.telePadsByName = new HashMap<String, TelePadInfo>();
-
-		JSONArray jsonArray = Json.loadDataArray(TelePadPlugin.getStorageFile());
-		if ((jsonArray != null) && (jsonArray.size() > 0)) {
-			Misc.info("Loaded %d TelePads", jsonArray.size());
-		} else {
-			Misc.info("No TelePads loaded.");
-			return;
-		}
-		rememberAllData(jsonArray);
+	public void delayedSave(JavaPlugin plugin, double seconds)
+	{
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
+			public void run() {
+				save();
+			}
+		}, Misc.secondsToTicks(seconds));		
 	}
 
-	private void rememberAllData(JSONArray telePads) {
-		for (int i = 0; i < telePads.size(); i++) {
-			this.add(TelePadInfo.createTelePadInfo((JSONObject) telePads.get(i)));
-		}
+	public void delayedLoad(JavaPlugin plugin, double seconds)
+	{
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
+			public void run() {
+				load();
+			}
+		}, Misc.secondsToTicks(seconds));		
 	}
 
+	@SuppressWarnings("unchecked")
 	void save() {
-		int telePads = Json.saveData(TelePadPlugin.getStorageFile(), getAllData());
-		if (telePads > 0) {
-			Misc.info("Saved %d TelePads", telePads);
-		} else {
-			Misc.info("Saved no TelePads.");		
-		}
-	}
-
-	private JSONArray getAllData() {
 		JSONArray telePads = new JSONArray();
 		for (TelePadInfo telePadInfo : getAll()) {
 			telePads.add(telePadInfo.toJson());
 		}
-		return telePads;
+		if ((telePads == null) || (telePads.size() == 0)) {
+			Misc.info("No TelePads saved.");
+			return;
+		}
+		Misc.info("Saving %d TelePads", telePads.size());
+		Json.save(TelePadPlugin.getStorageFile(), Json.fromBody("TelePad", 1, telePads));
+	}
+
+	void load() {
+		JSONObject data = Json.load(TelePadPlugin.getStorageFile());
+		JSONArray array = Json.toBodyPayload(data);
+		if ((array == null) || (array.size() == 0)) {
+			Misc.info("No TelePads loaded.");
+			return;
+		}
+		Misc.info("Loading %d TelePads", array.size());
+		this.telePadsByBlock = new HashMap<String, TelePadInfo>();
+		this.telePadsByName = new HashMap<String, TelePadInfo>();
+		for (int i = 0; i < array.size(); i++) {
+			this.add(TelePadInfo.createTelePadInfo((JSONObject) array.get(i)));
+		}
 	}
 }

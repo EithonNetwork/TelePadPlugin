@@ -34,7 +34,7 @@ public class Commands {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.allTelePads.load(plugin);
+		this.allTelePads.delayedLoad(plugin, 20.0);
 	}
 
 	void disable() {
@@ -159,7 +159,7 @@ public class Commands {
 	private void createOrUpdateTelePad(Player player, String name, double upSpeed, double forwardSpeed) {
 		Block pressurePlate = Misc.getFirstBlockOfMaterial(Material.STONE_PLATE, player.getLocation(), 3);
 		if (pressurePlate == null) {
-			player.sendMessage("No stone plate within 3 blocks");
+			player.sendMessage("No stone plate within 3 blocks.");
 			return;
 		}
 		
@@ -174,6 +174,7 @@ public class Commands {
 			if (player != null) {
 				Teleer.get().playerCanTele(player, false);
 			}
+			this.allTelePads.delayedSave(this.plugin, 0.0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
