@@ -20,7 +20,7 @@ public class Teleer {
 	private static Teleer singleton = null;
 
 	private PlayerCollection<TelePadInfo> playersAboutToTele = null;
-	private PlayerCollection<TelePadInfo> playersWithTemporaryTelePause = null;
+	private PlayerCollection<PauseInfo> playersWithTemporaryTelePause = null;
 	private AllTelePads allTelePads = null;
 	private JavaPlugin plugin = null;
 	private long ticksBeforeTele;
@@ -28,6 +28,7 @@ public class Teleer {
 	private long slownessTicks;
 	private long blindnessTicks;
 	private long disableEffectsAfterTicks;
+	private int secondsToPauseBeforeNextTeleport;
 
 	private Teleer() {
 		this.allTelePads = AllTelePads.get();
@@ -43,7 +44,7 @@ public class Teleer {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.playersWithTemporaryTelePause = new PlayerCollection<TelePadInfo>(new TelePadInfo());
+		this.playersWithTemporaryTelePause = new PlayerCollection<PauseInfo>(new PauseInfo());
 		this.playersAboutToTele = new PlayerCollection<TelePadInfo>(new TelePadInfo());
 		loadConfiguration();
 	}
@@ -67,13 +68,19 @@ public class Teleer {
 		}
 		*/
 		if (hasTemporaryTelePause(player)) {
-			playerCanTele(player, true);
+			if (pauseIsOver(player)) playerCanTele(player, true);
 			return;
 		}
 		if (isAboutToTele(player)) return;
 		
 		float oldWalkSpeed = stopPlayer(player);
 		teleSoon(player, info, oldWalkSpeed);
+	}
+
+	private boolean pauseIsOver(Player player) {
+		PauseInfo pauseInfo = this.playersWithTemporaryTelePause.get(player);
+		if (pauseInfo == null) return true;
+		return pauseInfo.isPausOver();
 	}
 
 	boolean isAboutToTele(Player player) {
@@ -151,7 +158,7 @@ public class Teleer {
 			}
 		} else {
 			if (!hasTemporaryTelePause(player)) {
-				this.playersWithTemporaryTelePause.put(player, new TelePadInfo());
+				this.playersWithTemporaryTelePause.put(player, new PauseInfo(player, this.secondsToPauseBeforeNextTeleport));
 			}
 		}
 	}
@@ -167,5 +174,6 @@ public class Teleer {
 		this.slownessTicks = config.getInt("SlownessTicks", 0);
 		this.blindnessTicks = config.getInt("BlindnessTicks", 0);
 		this.disableEffectsAfterTicks = config.getInt("DisableEffectsAfterTicks", 0);
+		this.secondsToPauseBeforeNextTeleport = config.getInt("SecondsToPauseBeforeNextTeleport", 5);
 	}
 }

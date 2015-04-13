@@ -29,6 +29,10 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 2.1 (2015-04-13)
+
+* NEW: Now has a configurable pause before another telepad jump can be made.
+
 ### 2.0 (2015-04-12)
 
 * NEW: Uses JSON.
