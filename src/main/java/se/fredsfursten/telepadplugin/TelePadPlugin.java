@@ -15,12 +15,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import se.fredsfursten.plugintools.Misc;
+import se.fredsfursten.plugintools.PluginConfig;
 
 public final class TelePadPlugin extends JavaPlugin implements Listener {
 	private static File telePadStorageFile;
 	
 	@Override
 	public void onEnable() {
+		PluginConfig.get(this);
 		telePadStorageFile = new File(getDataFolder(), "telepads.json");
 		getServer().getPluginManager().registerEvents(this, this);		
 		Misc.enable(this);

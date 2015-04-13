@@ -5,6 +5,7 @@ SlownessTicks: 0
 DisableEffectsAfterTicks: 120
 DoDebugPrint: 0
 SecondsBeforeLoad: 5.0
+SecondsToPauseBeforeNextTeleport: 5
 
 
 
