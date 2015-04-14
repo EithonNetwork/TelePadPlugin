@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
+import se.fredsfursten.plugintools.CoolDown;
 import se.fredsfursten.plugintools.PlayerCollection;
 import se.fredsfursten.plugintools.PluginConfig;
 
@@ -20,7 +21,7 @@ public class Teleer {
 	private static Teleer singleton = null;
 
 	private PlayerCollection<TelePadInfo> playersAboutToTele = null;
-	private PlayerCollection<PauseInfo> playersWithTemporaryTelePause = null;
+	CoolDown _coolDown = null;
 	private AllTelePads allTelePads = null;
 	private JavaPlugin plugin = null;
 	private long ticksBeforeTele;
@@ -44,9 +45,9 @@ public class Teleer {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
-		this.playersWithTemporaryTelePause = new PlayerCollection<PauseInfo>(new PauseInfo());
-		this.playersAboutToTele = new PlayerCollection<TelePadInfo>(new TelePadInfo());
 		loadConfiguration();
+		this._coolDown = new CoolDown("telepad", this.secondsToPauseBeforeNextTeleport);
+		this.playersAboutToTele = new PlayerCollection<TelePadInfo>(new TelePadInfo());
 	}
 
 	void disable() {
@@ -56,10 +57,7 @@ public class Teleer {
 		if (pressurePlate.getType() != Material.STONE_PLATE) return;
 		Location location = pressurePlate.getLocation();
 		TelePadInfo info = this.allTelePads.getByLocation(location);
-		if (info == null) {
-			playerCanTele(player, true);
-			return;
-		}
+		if (info == null) return;
 		
 		/*
 		if (!hasReadRules(player)) {
@@ -67,20 +65,11 @@ public class Teleer {
 			return;
 		}
 		*/
-		if (hasTemporaryTelePause(player)) {
-			if (pauseIsOver(player)) playerCanTele(player, true);
-			return;
-		}
+		if (this._coolDown.isInCoolDownPeriod(player)) return;
 		if (isAboutToTele(player)) return;
 		
 		float oldWalkSpeed = stopPlayer(player);
 		teleSoon(player, info, oldWalkSpeed);
-	}
-
-	private boolean pauseIsOver(Player player) {
-		PauseInfo pauseInfo = this.playersWithTemporaryTelePause.get(player);
-		if (pauseInfo == null) return true;
-		return pauseInfo.isPausOver();
 	}
 
 	boolean isAboutToTele(Player player) {
@@ -129,11 +118,12 @@ public class Teleer {
 				if (hasBlindness) player.removePotionEffect(PotionEffectType.BLINDNESS);
 			}
 		}, this.disableEffectsAfterTicks);
+		final Teleer instance = this;
 		scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
 			public void run() {
 				if (!isAboutToTele(player)) return;
 				setPlayerIsAboutToTele(player, info, false);
-				playerCanTele(player, false);
+				instance._coolDown.addPlayer(player);
 				tele(player, info);
 			}
 		}, this.ticksBeforeTele);
@@ -149,22 +139,6 @@ public class Teleer {
 	void tele(Player player, TelePadInfo info) {
 		Location targetLocation = info.getTargetLocation();
 		player.teleport(targetLocation);
-	}
-
-	void playerCanTele(Player player, boolean canTele) {
-		if (canTele){
-			if (hasTemporaryTelePause(player)) {
-				this.playersWithTemporaryTelePause.remove(player);
-			}
-		} else {
-			if (!hasTemporaryTelePause(player)) {
-				this.playersWithTemporaryTelePause.put(player, new PauseInfo(player, this.secondsToPauseBeforeNextTeleport));
-			}
-		}
-	}
-
-	private boolean hasTemporaryTelePause(Player player) {
-		return this.playersWithTemporaryTelePause.hasInformation(player);
 	}
 
 	public void loadConfiguration() {

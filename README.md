@@ -29,6 +29,11 @@ A player must have the "TelePad.jump" permission to use a TelePad. If he/she doe
 
 ## Release history
 
+### 2.1.1 (2015-04-14)
+
+* NEW: Now uses the CoolDown class for pauses.
+* NEW: Added comments to the config.yml file
+
 ### 2.1 (2015-04-13)
 
 * NEW: Now has a configurable pause before another telepad jump can be made.
